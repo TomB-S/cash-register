@@ -1,0 +1,94 @@
+<header>
+  <h1>{{ title }}</h1>
+</header>
+
+<main>
+  <!--
+    Le bandeau d'erreur, affiché seulement quand store.error() contient un message.
+    « as message » donne un nom à la valeur testée, pour l'afficher sans relire le signal.
+    role="alert" : les lecteurs d'écran annoncent le message dès qu'il apparaît.
+  -->
+  @if (store.error(); as message) {
+    <div class="error" role="alert">
+      <span>{{ message }}</span>
+      <!-- Réessaie le chargement ou l'envoi, selon ce qui a échoué (voir retry dans le service). -->
+      <button type="button" class="button" (click)="store.retry()">Réessayer</button>
+      <button
+        type="button"
+        class="close"
+        title="Fermer le message"
+        aria-label="Fermer le message"
+        (click)="store.clearError()"
+      >
+        ✕
+      </button>
+    </div>
+  }
+
+  <!--
+    Formulaire de création d'une liste.
+    (ngSubmit) se déclenche quand on envoie le formulaire : clic sur le bouton « submit »
+    ou touche Entrée dans le champ. FormsModule empêche alors le navigateur de recharger la page.
+  -->
+  <form class="new-list" (ngSubmit)="createList()">
+    <!--
+      [(ngModel)]="newListName" : liaison « dans les deux sens ».
+      - ce qu'on tape est rangé dans le signal newListName ;
+      - quand le code change newListName (par exemple pour le vider), le champ suit.
+      Dans un <form>, ngModel exige un attribut name.
+    -->
+    <input
+      type="text"
+      class="field"
+      name="name"
+      placeholder="Nom de la nouvelle liste"
+      aria-label="Nom de la nouvelle liste"
+      maxlength="100"
+      [(ngModel)]="newListName"
+    />
+    <!-- Bouton désactivé tant que le champ est vide (ou ne contient que des espaces). -->
+    <button type="submit" class="button" [disabled]="!newListName().trim()">Créer la liste</button>
+  </form>
+
+  <!-- L'état de la synchronisation : un envoi est-il en cours ? -->
+  <p class="sync-status">
+    @if (store.saving()) {
+      Envoi des listes au serveur…
+    } @else {
+      Mode test : vos listes sont envoyées au serveur, mais il ne les conserve pas.
+    }
+  </p>
+
+  <!-- Pendant le chargement, un message d'attente remplace les cartes. -->
+  @if (store.loading()) {
+    <p class="empty">Chargement des listes…</p>
+  } @else {
+    <div class="lists">
+      <!-- Les listes viennent du service : store.lists(). -->
+      @for (list of store.lists(); track list.id) {
+        <!--
+          Chaque liste est affichée par le composant ListCard (dossier list-card/).
+          - [list]="list" donne la liste à son entrée « list » : les données DESCENDENT ;
+          - (addTask)="…" écoute sa sortie « addTask » : les événements REMONTENT.
+            $event contient ce que ListCard a envoyé avec emit() : ici le titre saisi.
+          Les actions sont transmises directement au service, sauf la suppression d'une liste
+          qui passe d'abord par la confirmation de App.
+        -->
+        <app-list-card
+          [list]="list"
+          (addTask)="store.addTask(list, $event)"
+          (toggleTask)="store.toggleTask(list, $event)"
+          (deleteTask)="store.deleteTask(list, $event)"
+          (deleteList)="deleteList(list)"
+        />
+      } @empty {
+        <!-- En cas d'erreur, le tableau est vide mais « Aucune liste » serait trompeur. -->
+        @if (!store.error()) {
+          <p class="empty">
+            Aucune liste pour l'instant. Créez-en une avec le formulaire ci-dessus.
+          </p>
+        }
+      }
+    </div>
+  }
+</main>

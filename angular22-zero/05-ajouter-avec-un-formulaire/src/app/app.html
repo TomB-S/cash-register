@@ -1,0 +1,50 @@
+<header>
+  <h1>{{ title }}</h1>
+</header>
+
+<main>
+  <!--
+    Formulaire de création d'une liste.
+    (ngSubmit) se déclenche quand on envoie le formulaire : clic sur le bouton « submit »
+    ou touche Entrée dans le champ. FormsModule empêche alors le navigateur de recharger la page.
+  -->
+  <form class="new-list" (ngSubmit)="createList()">
+    <!--
+      [(ngModel)]="newListName" : liaison « dans les deux sens ».
+      - ce qu'on tape est rangé dans le signal newListName ;
+      - quand le code change newListName (par exemple pour le vider), le champ suit.
+      Dans un <form>, ngModel exige un attribut name.
+    -->
+    <input
+      type="text"
+      class="field"
+      name="name"
+      placeholder="Nom de la nouvelle liste"
+      aria-label="Nom de la nouvelle liste"
+      maxlength="100"
+      [(ngModel)]="newListName"
+    />
+    <!-- Bouton désactivé tant que le champ est vide (ou ne contient que des espaces). -->
+    <button type="submit" class="button" [disabled]="!newListName().trim()">Créer la liste</button>
+  </form>
+
+  <div class="lists">
+    @for (list of lists(); track list.id) {
+      <!--
+        Chaque liste est affichée par le composant ListCard (dossier list-card/).
+        - [list]="list" donne la liste à son entrée « list » : les données DESCENDENT ;
+        - (addTask)="…" écoute sa sortie « addTask » : les événements REMONTENT.
+          $event contient ce que ListCard a envoyé avec emit() : ici le titre saisi.
+      -->
+      <app-list-card
+        [list]="list"
+        (addTask)="addTask(list, $event)"
+        (toggleTask)="toggleTask(list, $event)"
+        (deleteTask)="deleteTask(list, $event)"
+        (deleteList)="deleteList(list)"
+      />
+    } @empty {
+      <p class="empty">Aucune liste pour l'instant. Créez-en une avec le formulaire ci-dessus.</p>
+    }
+  </div>
+</main>

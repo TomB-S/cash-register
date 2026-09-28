@@ -1,0 +1,45 @@
+<header>
+  <h1>{{ title }}</h1>
+</header>
+
+<main>
+  <div class="lists">
+    <!--
+      @for répète son bloc pour chaque élément d'un tableau : ici, une carte par liste.
+      - lists() lit le contenu du signal : les parenthèses sont obligatoires ;
+      - « track list.id » dit à Angular comment reconnaître une liste d'un affichage à l'autre
+        (grâce à son numéro unique), pour ne redessiner que ce qui a changé.
+    -->
+    @for (list of lists(); track list.id) {
+      <section class="card">
+        <h2>{{ list.name }}</h2>
+
+        <ul>
+          <!-- Une seconde boucle, dans la première : les tâches de la liste. -->
+          @for (task of list.tasks; track task.id) {
+            <li>
+              <!--
+                [class.done]="task.done" ajoute la classe CSS « done » quand task.done vaut true,
+                et la retire sinon. Dans app.css, cette classe barre le texte.
+              -->
+              <label [class.done]="task.done">
+                <!--
+                  [checked]="task.done" : la case est cochée quand la tâche est réalisée.
+                  Les crochets [ ] relient une propriété de l'élément HTML à une valeur TypeScript.
+                  « disabled » empêche de cliquer : ce sera possible à l'étape 03.
+                -->
+                <input type="checkbox" [checked]="task.done" disabled />
+                {{ task.title }}
+              </label>
+            </li>
+          } @empty {
+            <!-- @empty s'affiche à la place de la boucle quand le tableau est vide. -->
+            <li class="empty">Aucune tâche pour l'instant.</li>
+          }
+        </ul>
+      </section>
+    } @empty {
+      <p class="empty">Aucune liste pour l'instant.</p>
+    }
+  </div>
+</main>

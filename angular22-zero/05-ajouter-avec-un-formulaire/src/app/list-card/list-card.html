@@ -1,0 +1,55 @@
+<!--
+  Gabarit d'UNE liste. list() lit l'entrée du composant (c'est un signal).
+  Pour agir, on « émet » une sortie avec emit(), et c'est le parent (App) qui réagit.
+-->
+<section class="card">
+  <div class="card-header">
+    <h2>{{ list().name }}</h2>
+    <button
+      type="button"
+      class="delete"
+      title="Supprimer la liste"
+      aria-label="Supprimer la liste"
+      (click)="deleteList.emit()"
+    >
+      ✕
+    </button>
+  </div>
+
+  <ul>
+    @for (task of list().tasks; track task.id) {
+      <li>
+        <label [class.done]="task.done">
+          <!-- emit(task) envoie la tâche au parent, qui la reçoit dans $event. -->
+          <input type="checkbox" [checked]="task.done" (change)="toggleTask.emit(task)" />
+          {{ task.title }}
+        </label>
+        <button
+          type="button"
+          class="delete"
+          title="Supprimer la tâche"
+          aria-label="Supprimer la tâche"
+          (click)="deleteTask.emit(task)"
+        >
+          ✕
+        </button>
+      </li>
+    } @empty {
+      <li class="empty">Aucune tâche pour l'instant.</li>
+    }
+  </ul>
+
+  <!-- Formulaire d'ajout d'une tâche : même principe que celui de création d'une liste. -->
+  <form class="new-task" (ngSubmit)="submitTask()">
+    <input
+      type="text"
+      class="field"
+      name="title"
+      placeholder="Nouvelle tâche"
+      aria-label="Nouvelle tâche"
+      maxlength="200"
+      [(ngModel)]="newTaskTitle"
+    />
+    <button type="submit" class="button" [disabled]="!newTaskTitle().trim()">Ajouter</button>
+  </form>
+</section>

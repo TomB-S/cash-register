@@ -1,0 +1,63 @@
+<header>
+  <h1>{{ title }}</h1>
+</header>
+
+<main>
+  <div class="lists">
+    <!--
+      @for répète son bloc pour chaque élément d'un tableau : ici, une carte par liste.
+      « track list.id » dit à Angular comment reconnaître une liste d'un affichage à l'autre.
+    -->
+    @for (list of lists(); track list.id) {
+      <section class="card">
+        <div class="card-header">
+          <h2>{{ list.name }}</h2>
+          <!--
+            (click)="deleteList(list)" : au clic sur le bouton, Angular appelle la méthode
+            deleteList de la classe, en lui donnant la liste de cette carte.
+            Retenez : les parenthèses ( ) écoutent un événement,
+                      les crochets [ ] lient une propriété (étape 02).
+          -->
+          <button
+            type="button"
+            class="delete"
+            title="Supprimer la liste"
+            aria-label="Supprimer la liste"
+            (click)="deleteList(list)"
+          >
+            ✕
+          </button>
+        </div>
+
+        <ul>
+          @for (task of list.tasks; track task.id) {
+            <li>
+              <!--
+                Cliquer sur le texte d'un <label> revient à cliquer sur sa case à cocher.
+                [class.done] barre le texte quand la tâche est réalisée.
+              -->
+              <label [class.done]="task.done">
+                <!-- (change) : l'événement déclenché quand on coche ou décoche la case. -->
+                <input type="checkbox" [checked]="task.done" (change)="toggleTask(list, task)" />
+                {{ task.title }}
+              </label>
+              <button
+                type="button"
+                class="delete"
+                title="Supprimer la tâche"
+                aria-label="Supprimer la tâche"
+                (click)="deleteTask(list, task)"
+              >
+                ✕
+              </button>
+            </li>
+          } @empty {
+            <li class="empty">Aucune tâche pour l'instant.</li>
+          }
+        </ul>
+      </section>
+    } @empty {
+      <p class="empty">Aucune liste pour l'instant.</p>
+    }
+  </div>
+</main>

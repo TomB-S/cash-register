@@ -1,0 +1,9 @@
+{
+  // Extensions conseillées : VS Code propose de les installer à l'ouverture du dossier.
+  "recommendations": [
+    // Aide à l'écriture des gabarits Angular (complétion, erreurs dans le HTML).
+    "angular.ng-template",
+    // Respecte le fichier .editorconfig (fins de ligne LF, indentation…).
+    "editorconfig.editorconfig"
+  ]
+}

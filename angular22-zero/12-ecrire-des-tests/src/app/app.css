@@ -1,0 +1,81 @@
+/*
+ * Styles du composant App. Angular les limite à ce composant : un « h1 » écrit ici
+ * ne change pas les titres des autres composants.
+ * Les styles d'une carte sont désormais dans list-card/list-card.css.
+ */
+
+/* L'en-tête : le titre à gauche, le panneau du compte à droite (en dessous si trop étroit). */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: #3949ab;
+  color: white;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+main {
+  padding: 1.5rem 2rem;
+}
+
+/* Les listes en grille : autant de colonnes (de 280px au moins) que la largeur le permet. */
+.lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Le message « Aucune liste ». */
+.empty {
+  color: #888;
+  font-style: italic;
+}
+
+/* Le formulaire de création d'une liste, au-dessus des cartes. */
+.new-list {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 480px;
+  margin-bottom: 0.5rem;
+}
+
+/* La ligne d'état de la synchronisation, discrète, sous le formulaire. */
+.sync-status {
+  margin: 0 0 1.5rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Le bandeau d'erreur : fond rouge pâle, le message à gauche, les boutons à droite. */
+.error {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #f5c2c0;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #8e1c1c;
+}
+
+/* Le message prend toute la place libre et pousse les boutons à droite. */
+.error span {
+  flex: 1;
+}
+
+/* Le bouton ✕ qui ferme le bandeau. */
+.close {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}

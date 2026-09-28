@@ -1,0 +1,58 @@
+/*
+ * Styles du panneau du compte. Il s'affiche dans l'en-tête bleu de la page : textes blancs,
+ * champs et boutons clairs.
+ */
+
+/* :host désigne l'élément <app-account-panel> lui-même. */
+:host {
+  display: block;
+}
+
+/* Le formulaire et la barre « connecté » : éléments alignés, qui passent à la ligne si besoin. */
+.login,
+.connected {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+input {
+  width: 9rem;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+}
+
+/* Bouton principal : fond blanc, texte bleu. */
+button {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid white;
+  border-radius: 6px;
+  background: white;
+  color: #3949ab;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Bouton secondaire : seulement un contour blanc. */
+.secondary {
+  background: transparent;
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Le message d'erreur, sur fond clair pour rester lisible sur le bleu. */
+.message {
+  margin: 0.5rem 0 0;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: #fdecea;
+  color: #8e1c1c;
+  font-size: 0.9rem;
+}

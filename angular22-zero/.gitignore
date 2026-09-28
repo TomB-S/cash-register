@@ -1,0 +1,20 @@
+# Dépendances et fichiers produits par les outils : ils se régénèrent, on ne les versionne pas.
+
+# Angular (dans chaque dossier d'étape)
+node_modules/
+dist/
+.angular/
+coverage/
+npm-debug.log
+
+# Serveur Java
+target/
+*.db
+
+# Réglages locaux du serveur (copie personnelle de serveur/.env.example)
+.env
+
+# Éditeurs et systèmes
+.idea/
+.DS_Store
+Thumbs.db

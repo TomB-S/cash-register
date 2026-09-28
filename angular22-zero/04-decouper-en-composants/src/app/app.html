@@ -1,0 +1,24 @@
+<header>
+  <h1>{{ title }}</h1>
+</header>
+
+<main>
+  <div class="lists">
+    @for (list of lists(); track list.id) {
+      <!--
+        Chaque liste est affichée par le composant ListCard (dossier list-card/).
+        - [list]="list" donne la liste à son entrée « list » : les données DESCENDENT ;
+        - (toggleTask)="…" écoute sa sortie « toggleTask » : les événements REMONTENT.
+          $event contient ce que ListCard a envoyé avec emit(), ici la tâche cliquée.
+      -->
+      <app-list-card
+        [list]="list"
+        (toggleTask)="toggleTask(list, $event)"
+        (deleteTask)="deleteTask(list, $event)"
+        (deleteList)="deleteList(list)"
+      />
+    } @empty {
+      <p class="empty">Aucune liste pour l'instant.</p>
+    }
+  </div>
+</main>

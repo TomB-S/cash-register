@@ -1,0 +1,19 @@
+/*
+ * Styles du composant App. Angular les limite à ce composant : un « h1 » écrit ici
+ * ne change pas les titres des autres composants.
+ */
+
+header {
+  padding: 1rem 2rem;
+  background: #3949ab;
+  color: white;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+main {
+  padding: 1.5rem 2rem;
+}
