@@ -13,3 +13,6 @@ yummy.db
 node_modules/
 dist/
 .angular/
+
+# Filet de secours local, non destiné au rendu
+front-secours/

@@ -1,1 +1,26 @@
-<p>login-page works!</p>
+<div class="card">
+  <h1>YummyComponents — Caisse</h1>
+
+  <!-- [formGroup] relie ce <form> à l'objet `form` défini dans login-page.ts.
+       (ngSubmit) appelle onSubmit() à la soumission (clic ou touche Entrée). -->
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <label for="login">Identifiant</label>
+      <!-- formControlName relie CET input au champ "login" du formulaire. -->
+      <input id="login" formControlName="login" autocomplete="username" />
+    </div>
+
+    <div class="form-field">
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" formControlName="password" autocomplete="current-password" />
+    </div>
+
+    <!-- @if : n'affiche ce bloc que si errorMessage() n'est pas null. -->
+    @if (errorMessage()) {
+      <p class="alert alert-error">{{ errorMessage() }}</p>
+    }
+
+    <!-- form.invalid : vrai tant qu'un champ obligatoire est vide. -->
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Se connecter</button>
+  </form>
+</div>
