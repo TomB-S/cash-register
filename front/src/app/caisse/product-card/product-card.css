@@ -1,0 +1,13 @@
+.product-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  text-align: left;
+  width: 100%;
+}
+
+/* Produit hors stock : visible mais grisé, pas cliquable (déjà géré par [disabled]). */
+.product-card.sold-out {
+  opacity: 0.5;
+}
