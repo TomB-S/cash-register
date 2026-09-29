@@ -1,5 +1,21 @@
 <div class="caisse-layout">
   <div class="catalogue">
+    <!-- Les 2 formules, au-dessus du catalogue. [disabled] si une des 3 catégories
+         n'a plus aucun produit disponible. (click) ouvre la fenêtre de choix. -->
+    <section>
+      <h2>Formules</h2>
+      @for (formula of formulas(); track formula.id) {
+        <button
+          type="button"
+          class="card"
+          [disabled]="!formulaIsAvailable(formula)"
+          (click)="openFormulaPicker(formula)"
+        >
+          {{ formula.name }} — {{ formula.price | euros }}
+        </button>
+      }
+    </section>
+
     <!-- @for boucle sur categories (l'ordre défini dans models.ts).
      track = obligatoire avec @for, identifiant unique. -->
     @for (cat of categories; track cat.code) {
@@ -20,3 +36,16 @@
   <!-- NotePanel n'a besoin d'aucun input : il lit NoteService directement (partagé). -->
   <app-note-panel />
 </div>
+
+<!-- @if (expr; as nom) : si formulaBeingPicked() n'est pas null, on le nomme "formula"
+     à l'intérieur du bloc (évite de rappeler la fonction, et TypeScript sait qu'il
+     n'est jamais null ici). La fenêtre n'existe dans le DOM que quand elle est ouverte. -->
+@if (formulaBeingPicked(); as formula) {
+  <app-formula-picker
+    [formula]="formula"
+    [products]="products()"
+    [availableStock]="availableStockFn"
+    (confirm)="onFormulaConfirmed($event)"
+    (cancel)="closeFormulaPicker()"
+  />
+}

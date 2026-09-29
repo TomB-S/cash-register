@@ -29,8 +29,13 @@ export class NotePanel {
     this.noteService.decreaseQuantity(productId);
   }
 
-  // Bouton suppression.
+  // Bouton suppression, pour une ligne produit.
   remove(productId: number): void {
     this.noteService.removeLine(productId);
+  }
+
+  // Bouton suppression, pour une ligne formule (identifiée par son id unique).
+  removeFormula(lineId: number): void {
+    this.noteService.removeFormulaLine(lineId);
   }
 }

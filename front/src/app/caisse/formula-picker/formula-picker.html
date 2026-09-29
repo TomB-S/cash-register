@@ -1,0 +1,52 @@
+<!-- overlay : le fond assombri derrière la fenêtre. Cliquer sur "Annuler" ou dehors ferme. -->
+<div class="overlay">
+  <div class="card picker">
+    <h2>{{ formula().name }} — {{ formula().price | euros }}</h2>
+
+    <h3>Plat</h3>
+    @for (product of mainProducts(); track product.id) {
+      <button
+        type="button"
+        class="btn"
+        [class.selected]="selectedMain() === product"
+        [disabled]="availableStock()(product) <= 0"
+        (click)="selectedMain.set(product)"
+      >
+        {{ product.name }}
+      </button>
+    }
+
+    <h3>Boisson</h3>
+    @for (product of drinkProducts(); track product.id) {
+      <button
+        type="button"
+        class="btn"
+        [class.selected]="selectedDrink() === product"
+        [disabled]="availableStock()(product) <= 0"
+        (click)="selectedDrink.set(product)"
+      >
+        {{ product.name }}
+      </button>
+    }
+
+    <h3>Dessert</h3>
+    @for (product of dessertProducts(); track product.id) {
+      <button
+        type="button"
+        class="btn"
+        [class.selected]="selectedDessert() === product"
+        [disabled]="availableStock()(product) <= 0"
+        (click)="selectedDessert.set(product)"
+      >
+        {{ product.name }}
+      </button>
+    }
+
+    <div class="picker-actions">
+      <button type="button" class="btn btn-ghost" (click)="onCancel()">Annuler</button>
+      <button type="button" class="btn btn-primary" [disabled]="!canConfirm()" (click)="onConfirm()">
+        Ajouter à la note
+      </button>
+    </div>
+  </div>
+</div>
