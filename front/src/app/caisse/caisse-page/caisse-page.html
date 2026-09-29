@@ -33,8 +33,23 @@
     }
   </div>
 
-  <!-- NotePanel n'a besoin d'aucun input : il lit NoteService directement (partagé). -->
-  <app-note-panel />
+  <div class="note-column">
+    <!-- NotePanel n'a besoin d'aucun input : il lit NoteService directement (partagé). -->
+    <app-note-panel />
+
+    <!-- [disabled] : note vide OU paiement déjà en cours. -->
+    <button type="button" class="btn btn-success btn-lg" [disabled]="!canPay()" (click)="pay()">
+      Payer {{ noteTotal() | euros }}
+    </button>
+
+    @if (paidOrder(); as order) {
+      <p class="alert alert-success">Note n°{{ order.id }} payée : {{ order.total | euros }}</p>
+    }
+
+    @if (paymentError(); as message) {
+      <p class="alert alert-error">{{ message }}</p>
+    }
+  </div>
 </div>
 
 <!-- @if (expr; as nom) : si formulaBeingPicked() n'est pas null, on le nomme "formula"

@@ -1,7 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { CatalogService } from '../../services/catalog.service';
 import { NoteService } from '../../services/note.service';
-import { Product, Formula, CATEGORIES, Category } from '../../models';
+import { OrderService } from '../../services/order.service';
+import { Product, Formula, Order, DailyTotal, CATEGORIES, Category } from '../../models';
 import { ProductCard } from '../product-card/product-card';
 import { NotePanel } from '../note-panel/note-panel';
 import { FormulaPicker, FormulaSelection } from '../formula-picker/formula-picker';
@@ -19,21 +21,39 @@ export class CaissePage {
   private readonly catalogService = inject(CatalogService);
   // Pour ajouter des produits à la note, et connaître ce qui y est déjà.
   private readonly noteService = inject(NoteService);
+  // Pour payer, et connaître les totaux par jour.
+  private readonly orderService = inject(OrderService);
   // La liste des produits, vide au départ le temps que la requête réponde.
   readonly products = signal<Product[]>([]);
   // La liste des formules, vide au départ le temps que la requête réponde.
   readonly formulas = signal<Formula[]>([]);
+  // Les totaux par jour (étape 7), déjà chargés ici pour être rechargés après paiement.
+  readonly dailyTotals = signal<DailyTotal[]>([]);
 
   // --- ETAPE 2 --- Création du constructor
   constructor() {
-    // subscribe() déclenche vraiment la requête. Quand la réponse arrive,
-    // on remplace le tableau vide par les produits reçus.
+    this.loadProducts();
+    this.loadFormulas();
+    this.loadDailyTotals();
+  }
+
+  // Extraites du constructor pour pouvoir les rappeler après un paiement (stocks
+  // et totaux changés côté serveur).
+  private loadProducts(): void {
     this.catalogService.getProducts().subscribe((products) => {
       this.products.set(products);
     });
+  }
 
+  private loadFormulas(): void {
     this.catalogService.getFormulas().subscribe((formulas) => {
       this.formulas.set(formulas);
+    });
+  }
+
+  private loadDailyTotals(): void {
+    this.orderService.getDailyTotals().subscribe((totals) => {
+      this.dailyTotals.set(totals);
     });
   }
 
@@ -99,5 +119,50 @@ export class CaissePage {
 
     this.noteService.addFormula(formula, selection.main, selection.drink, selection.dessert);
     this.closeFormulaPicker();
+  }
+
+  // --- ETAPE 6 (paiement) ---
+  // Référence directe au total de la note, pour l'afficher sur le bouton "Payer".
+  readonly noteTotal = this.noteService.total;
+
+  // true pendant que la requête de paiement est en cours (désactive le bouton).
+  readonly isPaying = signal(false);
+
+  // Dernière commande payée avec succès (pour le message de confirmation), ou null.
+  readonly paidOrder = signal<Order | null>(null);
+
+  // Message d'erreur du dernier paiement raté (ex: 409 stock insuffisant), ou null.
+  readonly paymentError = signal<string | null>(null);
+
+  // Le bouton "Payer" est désactivé si la note est vide ou si un paiement est en cours.
+  canPay(): boolean {
+    return this.noteService.noteLines().length > 0 && !this.isPaying();
+  }
+
+  pay(): void {
+    // On efface les messages précédents, et on désactive le bouton pendant la requête.
+    this.paidOrder.set(null);
+    this.paymentError.set(null);
+    this.isPaying.set(true);
+
+    const request = this.noteService.toOrderRequest();
+
+    this.orderService.pay(request).subscribe({
+      next: (order) => {
+        this.isPaying.set(false);
+        this.paidOrder.set(order);
+        this.noteService.clear();
+        // Les stocks et les totaux ont changé côté serveur : on recharge tout.
+        this.loadProducts();
+        this.loadDailyTotals();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.isPaying.set(false);
+        // err.error.message = le message renvoyé par le serveur (ex: "Stock insuffisant...").
+        this.paymentError.set(err.error?.message ?? 'Erreur lors du paiement');
+        // Un 409 signifie que les stocks affichés sont périmés : on les recharge aussi.
+        this.loadProducts();
+      },
+    });
   }
 }

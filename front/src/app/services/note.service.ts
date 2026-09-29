@@ -1,6 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 
-import { Formula, Product } from '../models';
+import { Formula, OrderRequest, Product } from '../models';
 
 // --- ETAPE 1 --- Structure d'une ligne de la note
 // kind = étiquette qui dit si une ligne est un produit seul ou une formule.
@@ -131,5 +131,27 @@ export class NoteService {
   // car plusieurs formules identiques peuvent coexister, sans quantity pour les fusionner).
   removeFormulaLine(lineId: number): void {
     this.lines.update((currentLines) => currentLines.filter((l) => l.id !== lineId));
+  }
+
+  // --- ETAPE 12 (étape 6 du TP) --- Convertit la note en OrderRequest : le serveur ne
+  // veut que des identifiants et des quantités, jamais les objets Product/Formula entiers.
+  toOrderRequest(): OrderRequest {
+    const products: OrderRequest['products'] = [];
+    const formulas: OrderRequest['formulas'] = [];
+
+    for (const line of this.lines()) {
+      if (line.kind === 'product') {
+        products.push({ productId: line.product.id, quantity: line.quantity });
+      } else {
+        formulas.push({
+          formulaId: line.formula.id,
+          mainId: line.main.id,
+          drinkId: line.drink.id,
+          dessertId: line.dessert.id,
+        });
+      }
+    }
+
+    return { products, formulas };
   }
 }
