@@ -1,0 +1,25 @@
+<div class="card">
+  <h2>Note en cours</h2>
+
+  <!-- @for sur lines() (le signal readonly du service). track sur l'id du produit,
+       identifiant stable même si la quantité change. -->
+  @for (line of lines(); track line.product.id) {
+    <div class="note-line">
+      <span>{{ line.product.name }}</span>
+
+      <!-- decrease/increase modifient NoteService, qui met à jour lines() tout seul. -->
+      <button type="button" class="btn btn-ghost btn-icon" (click)="decrease(line.product.id)">−</button>
+      <span>{{ line.quantity }}</span>
+      <button type="button" class="btn btn-ghost btn-icon" (click)="increase(line.product)">+</button>
+
+      <!-- Sous-total de la ligne : prix unitaire * quantité, converti en euros. -->
+      <span>{{ line.product.price * line.quantity | euros }}</span>
+
+      <button type="button" class="btn btn-ghost btn-icon" (click)="remove(line.product.id)">🗑</button>
+    </div>
+  } @empty {
+    <p>Aucun produit pour l'instant.</p>
+  }
+
+  <p><strong>Total : {{ total() | euros }}</strong></p>
+</div>

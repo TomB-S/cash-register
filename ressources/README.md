@@ -10,3 +10,4 @@ pendant le développement, pour s'y retrouver dans Angular. À consulter, pas à
 - [05-formulaire-reactif.md](05-formulaire-reactif.md) — `LoginPage` et son formulaire
 - [06-input-output.md](06-input-output.md) — communication parent/enfant (`ProductCard`)
 - [07-vue-ensemble.md](07-vue-ensemble.md) — schéma général de l'appli à ce stade
+- [08-note-service.md](08-note-service.md) — `NoteService` : pourquoi un service, immutabilité, `kind`

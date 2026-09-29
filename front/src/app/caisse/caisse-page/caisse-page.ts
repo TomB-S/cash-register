@@ -1,10 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { CatalogService } from '../../services/catalog.service';
+import { NoteService } from '../../services/note.service';
 import { Product, CATEGORIES, Category } from '../../models';
 import { ProductCard } from '../product-card/product-card';
+import { NotePanel } from '../note-panel/note-panel';
 
 @Component({
-  imports: [ProductCard],
+  imports: [ProductCard, NotePanel],
   selector: 'app-caisse-page',
   styleUrl: './caisse-page.css',
   templateUrl: './caisse-page.html',
@@ -13,6 +15,8 @@ export class CaissePage {
   // --- ETAPE 1 --- Injection et déclaration
   // Pour appeler l'API du catalogue.
   private readonly catalogService = inject(CatalogService);
+  // Pour ajouter des produits à la note, et connaître ce qui y est déjà.
+  private readonly noteService = inject(NoteService);
   // La liste des produits, vide au départ le temps que la requête réponde.
   readonly products = signal<Product[]>([]);
 
@@ -34,10 +38,15 @@ export class CaissePage {
     return this.products().filter((p) => p.category === category);
   }
 
-  // --- ETAPE 4 (à venir) ---
-  // Reçoit le produit émis par (clicked) sur <app-product-card>.
-  // Provisoire : juste un log, ce sera remplacé par "ajouter à la note".
+  // --- ETAPE 4 ---
+  // Reçoit le produit émis par (clicked) sur <app-product-card> : on l'ajoute à la note.
   onProductClicked(product: Product): void {
-    console.log('Produit cliqué :', product);
+    this.noteService.addProduct(product);
+  }
+
+  // Stock réellement disponible : le stock de l'API moins ce qui est déjà dans la note.
+  // Utilisé par [available] sur <app-product-card>, pour griser un produit si stock=0
+  availableStock(product: Product): number {
+    return product.stock - this.noteService.quantityInNote(product.id);
   }
 }

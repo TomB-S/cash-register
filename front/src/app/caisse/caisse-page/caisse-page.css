@@ -1,0 +1,9 @@
+.caisse-layout {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.catalogue {
+  flex: 1;
+}

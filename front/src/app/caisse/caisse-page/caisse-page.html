@@ -1,15 +1,22 @@
-<!-- @for boucle sur categories (l'ordre défini dans models.ts). 
- track = obligatoire avec @for, identifiant unique. -->
-@for (cat of categories; track cat.code) {
-  <section>
-    <h2>{{ cat.icon }} {{ cat.label }}</h2>
+<div class="caisse-layout">
+  <div class="catalogue">
+    <!-- @for boucle sur categories (l'ordre défini dans models.ts).
+     track = obligatoire avec @for, identifiant unique. -->
+    @for (cat of categories; track cat.code) {
+      <section>
+        <h2>{{ cat.icon }} {{ cat.label }}</h2>
 
-    <!-- productsIn(cat.code) filtre les produits de CETTE catégorie.
-         [product] et [available] = on fournit les inputs de ProductCard.
-         (clicked) = écoute l'événement "clicked" émis par ProductCard,
-         et appelle onProductClicked() avec le produit. -->
-    @for (product of productsIn(cat.code); track product.id) {
-      <app-product-card [product]="product" [available]="product.stock" (clicked)="onProductClicked($event)" />
+        <!-- productsIn(cat.code) filtre les produits de CETTE catégorie.
+             [product] et [available] = on fournit les inputs de ProductCard.
+             (clicked) = écoute l'événement "clicked" émis par ProductCard,
+             et appelle onProductClicked() avec le produit. -->
+        @for (product of productsIn(cat.code); track product.id) {
+          <app-product-card [product]="product" [available]="availableStock(product)" (clicked)="onProductClicked($event)" />
+        }
+      </section>
     }
-  </section>
-}
+  </div>
+
+  <!-- NotePanel n'a besoin d'aucun input : il lit NoteService directement (partagé). -->
+  <app-note-panel />
+</div>
